@@ -214,8 +214,8 @@ public:
 		omp_set_num_threads(8);
 		#pragma omp parallel for
 		for (int y = 0; y < res_y; y++) {
-			int num = omp_get_thread_num();
-			std::cout << "y[" << y << "] : " << num << std::endl;
+			//int num = omp_get_thread_num();
+			//std::cout << "y[" << y << "] : " << num << std::endl;
 			for (int x = 0; x < res_x; x++) {
 				auto pos = c3ga::point<double>(x * pixel_res, y * pixel_res, 0.0);
 				if(display_geogebra)
@@ -416,7 +416,7 @@ void render_random(int nb_spheres, int positionAreaMax, double max_z, int res) {
 
 		//if (i == 87) {
 			objList.push_back(sphere);
-			std::cout << sphere.color;
+			//std::cout << sphere.color;
 			if (display_geogebra)
 				viewer.push(sphere.obj, 0, 0, 1);
 		//}
@@ -440,8 +440,27 @@ void render_random(int nb_spheres, int positionAreaMax, double max_z, int res) {
 
 
 ///////////////////////////////////////////////////////////
-int main() {
+int main(int argc, char* argv[]) {
+
+    int nb_spheres = 10;
+    int maxPositionAreaSize = 30;
+    double maxZposition = 1000;
+    int renderRes = 3000;
+
+    if(argc == 5){
+        nb_spheres = atoi(argv[1]);
+        maxPositionAreaSize = atoi(argv[2]);;
+        maxZposition = atoi(argv[3]);
+        renderRes=  atoi(argv[4]);
+
+
+    }
+
+    std::cout << "Config: " << nb_spheres << " spheres, ["
+         << maxPositionAreaSize << "," << maxPositionAreaSize << "] area, max depth: " << maxZposition
+         << ", render resolution: " << renderRes << " x " << renderRes << std::endl;
+
     display_geogebra = false;
-	render_random(20, 30, 100, 1000);
+	render_random(nb_spheres, maxPositionAreaSize, maxZposition, renderRes);
 	return 0;
 }
