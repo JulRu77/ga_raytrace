@@ -2,23 +2,24 @@
 
 Prototype de rendu par "lancer de rayons" via "ga".
 
-##Requis
+## Requis
 
 - g++
 - OpenMP
 
-##Dependances
+## Dependances
 
 - C3GA : https://github.com/vincentnozick/garamon
 Note: modifier le fichier CmakeList.txt pour indiquer l'empacement des includes et librairies c3ga
 
-##Compilation
+## Compilation
+```
+mkdir build
+cd build
+cmake ..
+make -j
+```
 
-> mkdir build
-> cd build
-> cmake ..
-> make -j
-
-##Lancement
+## Lancement
 
 ./ga_view spheres limit_x_y max_depth render_res
