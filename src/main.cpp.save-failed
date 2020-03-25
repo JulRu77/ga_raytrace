@@ -1,0 +1,162 @@
+#include <iostream>
+#include <cstdlib>
+#include <list>
+#include <c3ga/Mvec.hpp>
+
+#include "c3gaTools.hpp"
+#include "Geogebra_c3ga.hpp"
+
+#include "Entry.hpp"
+
+const double epsilon = 1e-6;
+
+
+
+
+///////////////////////////////////////////////////////////
+void sample1()
+{
+    Viewer_c3ga viewer;
+
+    // 4  points
+    c3ga::Mvec<double> pt1 = c3ga::point<double>(1,2,0.5);
+    c3ga::Mvec<double> pt2 = c3ga::point<double>(3,2,0.5);
+    c3ga::Mvec<double> pt3 = c3ga::point<double>(2,3,0.5);
+    c3ga::Mvec<double> pt4 = c3ga::point<double>(2,2,2.0);
+    viewer.push(pt1, "pt1", 200,0,0);
+    viewer.push(pt2, "pt2", 200,0,0);
+    viewer.push(pt3, "pt3", 200,0,0);
+    viewer.push(pt4, "pt4", 200,0,0);
+
+    // a line
+    c3ga::Mvec<double> line = pt3 ^ pt2 ^ c3ga::ei<double>();
+    viewer.push(line, "line", 0,200,0);
+
+    // a plane
+    c3ga::Mvec<double> plane = pt1 ^ pt2 ^ pt3 ^ c3ga::ei<double>();
+    viewer.push(plane, "plane", 150,200,0);
+
+    // a sphere
+    c3ga::Mvec<double> sphere = pt1 ^ pt2 ^ pt3 ^ pt4;
+    viewer.push(sphere, "sphere", 0,0,200);
+    std::cout << "sphere " << sphere << std::endl;
+
+    // a circle (sphere-plane intersection)
+    c3ga::Mvec<double> circle = !( !plane ^ !sphere );
+    // c3ga::Mvec<double> circle = pt1 ^ pt2 ^ pt3;
+    viewer.push(circle, "circle", 0,200,0);
+
+
+    viewer.display();
+    viewer.render("output.html");
+}
+
+
+///////////////////////////////////////////////////////////
+void sample2(){
+
+    Viewer_c3ga viewer;
+
+    // plane from 3  points (plane z=0)
+    c3ga::Mvec<double> pt1 = c3ga::point<double>(1,2,0.0);
+    c3ga::Mvec<double> pt2 = c3ga::point<double>(3,2,0.0);
+    c3ga::Mvec<double> pt3 = c3ga::point<double>(2,3,0.0);
+    c3ga::Mvec<double> plane = pt1 ^ pt2 ^ pt3 ^ c3ga::ei<double>();
+    //viewer.push(plane, 50,50,50);
+
+    // sphere
+    c3ga::Mvec<double> sphere = c3ga::point<double>(0,0,2.0)
+                              ^ c3ga::point<double>(2,0,2.0)
+                              ^ c3ga::point<double>(1,1,2.0)
+                              ^ c3ga::point<double>(1,0,3.0);
+    viewer.push(sphere, 200,200,00);
+
+    // circle
+    c3ga::Mvec<double> circle = c3ga::point<double>(0,-0.75,0.5)
+                              ^ c3ga::point<double>(2,-0.75,0.5)
+                              ^ c3ga::point<double>(1,-0.75,1.5);
+    viewer.push(circle, 200, 0, 0);
+
+    // line
+    c3ga::Mvec<double> line = c3ga::point<double>(0,-0.75,2.3)
+                              ^ c3ga::point<double>(2,-0.75,2.3)
+                              ^ c3ga::ei<double>();
+    viewer.push(line, 200, 0, 0);
+
+    // circle plane intersection
+    c3ga::Mvec<double> pp1 = !circle ^ !plane;
+    viewer.push(!pp1, 0, 200, 0);
+
+    // circle sphere intersection
+    c3ga::Mvec<double> pp2 = !circle ^ !sphere;
+    viewer.push(!pp2, 0, 200, 0);
+
+    // line sphere intersection
+    c3ga::Mvec<double> pp3 = !line ^ !sphere;
+    viewer.push(!pp3, 0, 200, 0);
+
+
+    viewer.display();
+    viewer.render("output.html");
+}
+
+
+///////////////////////////////////////////////////////////
+void sample_polygons()
+{
+    Viewer_c3ga viewer;
+
+    // a set of points
+    c3ga::Mvec<double> pt1 = c3ga::point<double>(1  , 2, 0.5);
+    c3ga::Mvec<double> pt2 = c3ga::point<double>(2  , 3, 0.5);
+    c3ga::Mvec<double> pt3 = c3ga::point<double>(3  , 3, 0.5);
+    c3ga::Mvec<double> pt4 = c3ga::point<double>(4  , 2, 0.5);
+    c3ga::Mvec<double> pt5 = c3ga::point<double>(2.5,-2, 0.5);
+
+    // put points on a list
+    std::list<c3ga::Mvec<double>> myList;
+    myList.push_back(pt1);
+    myList.push_back(pt2);
+    myList.push_back(pt3);
+    myList.push_back(pt4);
+    myList.push_back(pt5);
+
+    viewer.pushPolygon(myList, 0,200,0);
+
+    viewer.display();
+    viewer.render("output.html");
+}
+
+void test1()
+{
+    Viewer_c3ga viewer;
+    // sphere
+    c3ga::Mvec<double> sphere0 = c3ga::point<double>(0,0,2.0)
+                              ^ c3ga::point<double>(2,0,2.0)
+                              ^ c3ga::point<double>(1,1,2.0)
+                              ^ c3ga::point<double>(1,0,3.0);
+    viewer.push(sphere0, 200,200,00);
+
+    float x_move = 2.0;
+    // sphere
+    c3ga::Mvec<double> sphere1 = c3ga::point<double>(x_move,0,2.0)
+                              ^ c3ga::point<double>(2 + x_move,0,2.0)
+                              ^ c3ga::point<double>(1 + x_move,1,2.0)
+                              ^ c3ga::point<double>(1 + x_move,0,3.0);
+    viewer.push(sphere1, 0,200, 200);
+    viewer.display();
+    viewer.render("ex1.html");
+}
+
+///////////////////////////////////////////////////////////
+int main(){
+
+    //sample1();
+
+    // sample2();
+
+    // sample_polygons();
+    test1();
+
+    return 0;
+}
