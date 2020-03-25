@@ -11,8 +11,7 @@
 
 const double epsilon = 1e-6;
 
-constexpr bool display_geogebra = true;
-const double max_distance = 10.f;
+bool display_geogebra = true;
 
 double correct_intersection(c3ga::Mvec<double> line, c3ga::Mvec<double> cercle, Viewer_c3ga& viewer) {
 	c3ga::Mvec<double> sphere_dual = (!line) | (cercle);
@@ -179,8 +178,8 @@ public:
 
 class Camera {
 public:
-	Camera(int res_x, int res_y, double pixel_res) : res_x(res_x), res_y(res_y), pixel_res(pixel_res) {
-
+	Camera(int res_x, int res_y, double max_z, double pixel_res) : res_x(res_x), res_y(res_y), pixel_res(pixel_res) {
+        max_distance = max_z;
 		renderedImage = (ColorContainer**)malloc(sizeof(ColorContainer*) * res_y);
         if(renderedImage == nullptr){
             std::cerr << "Malloc error" << std::endl;
@@ -197,6 +196,7 @@ public:
 
 	int res_x, res_y;
 	double pixel_res;
+	double max_distance;
 
 	ColorContainer** renderedImage;
 
@@ -401,17 +401,16 @@ c3ga::Mvec<double> creer_ligne(double x_move) {
 
 
 
-void func() {
+void render_random(int nb_spheres, int positionAreaMax, double max_z, int res) {
 	Viewer_c3ga viewer;
 	// sphere
 
 	//Cercle 0
 	std::vector< Obj > objList;
 
-	int maxRand = 1;
 
-	for (int i = 0; i < 1; i++) {
-		Obj sphere = Sphere(rand() % maxRand, rand() % maxRand, rand() % 1);//creer_plan(3.f);
+	for (int i = 0; i < nb_spheres; i++) {
+		Obj sphere = Sphere(rand() % positionAreaMax, rand() % positionAreaMax, rand() % ((int) max_z));//creer_plan(3.f);
 
 		sphere.color = ColorContainer(rand() % 255, rand() % 255, rand() % 255);
 
@@ -423,7 +422,8 @@ void func() {
 		//}
 	}
 
-	Camera cam = Camera(5, 5, 1);
+    double pixel_res = ((double) positionAreaMax) / ((double) res);
+	Camera cam = Camera(res, res, max_z, pixel_res);
 	cam.render(viewer, objList);
 	cam.output_image();
 
@@ -441,6 +441,7 @@ void func() {
 
 ///////////////////////////////////////////////////////////
 int main() {
-	func();
+    display_geogebra = false;
+	render_random(20, 30, 100, 1000);
 	return 0;
 }
